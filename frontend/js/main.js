@@ -121,13 +121,41 @@ orderForm.addEventListener('order:submit', async (event) => {
 const testimonialsList = document.querySelector('.testimonials__list');
 const testimonialsArrows = document.querySelectorAll('.testimonials__arrow');
 
+function getTestimonialsStep() {
+  const firstCard = testimonialsList.firstElementChild;
+  if (!firstCard) return 0;
+
+  const styles = window.getComputedStyle(testimonialsList);
+  const gap = Number.parseFloat(styles.columnGap || styles.gap) || 0;
+
+  return firstCard.getBoundingClientRect().width + gap;
+}
+
+function updateTestimonialsArrows() {
+  const maxScrollLeft = testimonialsList.scrollWidth - testimonialsList.clientWidth - 1;
+
+  testimonialsArrows[0].disabled = testimonialsList.scrollLeft <= 0;
+  testimonialsArrows[1].disabled = testimonialsList.scrollLeft >= maxScrollLeft;
+}
+
 testimonialsArrows.forEach((arrow, index) => {
   arrow.addEventListener('click', () => {
     const direction = index === 0 ? -1 : 1;
-    const cardWidth = testimonialsList.firstElementChild?.offsetWidth ?? 0;
-    testimonialsList.scrollBy({ left: direction * (cardWidth + 24), behavior: 'smooth' });
+
+    testimonialsList.scrollBy({
+      left: direction * getTestimonialsStep(),
+      behavior: 'smooth',
+    });
   });
 });
+
+testimonialsList.addEventListener('scroll', () => {
+  window.requestAnimationFrame(updateTestimonialsArrows);
+});
+
+window.addEventListener('resize', updateTestimonialsArrows);
+
+updateTestimonialsArrows();
 
 /* ---------- Data ---------- */
 initTopSelling();

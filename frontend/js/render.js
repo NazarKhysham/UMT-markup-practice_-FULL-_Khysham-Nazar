@@ -1,6 +1,9 @@
 import { fetchTopSelling, fetchBouquets } from './api.js';
 
 const topSellingList = document.querySelector('#top-selling-list');
+const topSellingPrev = document.querySelector('#top-selling-prev');
+const topSellingNext = document.querySelector('#top-selling-next');
+const topSellingDots = document.querySelector('#top-selling-dots');
 const bouquetsList = document.querySelector('#bouquets-list');
 const bouquetsEmpty = document.querySelector('#bouquets-empty');
 const showMoreBtn = document.querySelector('#show-more-btn');
@@ -47,11 +50,68 @@ function registerProducts(items) {
   });
 }
 
+function getSliderStep(list) {
+  const firstCard = list?.firstElementChild;
+  if (!list || !firstCard) return 0;
+
+  const styles = window.getComputedStyle(list);
+  const gap = Number.parseFloat(styles.columnGap || styles.gap) || 0;
+
+  return firstCard.getBoundingClientRect().width + gap;
+}
+
+function getVisibleSlidesCount(list) {
+  const step = getSliderStep(list);
+  if (!list || !step) return 1;
+
+  return Math.max(1, Math.round(list.clientWidth / step));
+}
+
+function getSliderPages(list) {
+  const totalSlides = list?.children.length || 0;
+  const visibleSlides = getVisibleSlidesCount(list);
+
+  return Math.max(1, totalSlides - visibleSlides + 1);
+}
+
+function getCurrentSliderPage(list) {
+  const step = getSliderStep(list);
+  if (!step) return 0;
+
+  return Math.round(list.scrollLeft / step);
+}
+
+function scrollSlider(list, direction) {
+  const step = getSliderStep(list);
+  if (!step) return;
+
+  list.scrollBy({ left: direction * step, behavior: 'smooth' });
+}
+
+function updateTopSellingPagination() {
+  const pages = getSliderPages(topSellingList);
+  const currentPage = Math.min(getCurrentSliderPage(topSellingList), pages - 1);
+
+  if (topSellingPrev) topSellingPrev.disabled = currentPage <= 0;
+  if (topSellingNext) topSellingNext.disabled = currentPage >= pages - 1;
+
+  if (!topSellingDots) return;
+
+  topSellingDots.innerHTML = Array.from({ length: pages }, (_, index) => {
+    const isActive = index === currentPage ? ' products__dot--active' : '';
+
+    return `<button class="products__dot${isActive}" type="button" aria-label="Go to top-selling page ${
+      index + 1
+    }" data-page="${index}"></button>`;
+  }).join('');
+}
+
 export async function initTopSelling() {
   try {
     const items = await fetchTopSelling();
     registerProducts(items);
     topSellingList.innerHTML = items.map(productCardMarkup).join('');
+    updateTopSellingPagination();
   } catch (error) {
     topSellingList.innerHTML = `<li class="products__empty">Failed to load bestsellers. Please try again later.</li>`;
     console.error(error);
@@ -76,6 +136,9 @@ async function loadBouquets({ append }) {
     const loadedCount = bouquetsList.children.length;
     bouquetsEmpty.hidden = loadedCount > 0;
     showMoreBtn.hidden = loadedCount >= total;
+    if (window.AOS) {
+      AOS.refreshHard();
+    }
   } catch (error) {
     if (!append) {
       bouquetsList.innerHTML = '';
@@ -108,6 +171,29 @@ export function initBouquets() {
   });
 
   filterForm.addEventListener('submit', (event) => event.preventDefault());
+}
+
+if (topSellingPrev && topSellingNext && topSellingList) {
+  topSellingPrev.addEventListener('click', () => scrollSlider(topSellingList, -1));
+  topSellingNext.addEventListener('click', () => scrollSlider(topSellingList, 1));
+
+  topSellingList.addEventListener('scroll', () =>
+    window.requestAnimationFrame(updateTopSellingPagination)
+  );
+
+  window.addEventListener('resize', updateTopSellingPagination);
+}
+
+if (topSellingDots && topSellingList) {
+  topSellingDots.addEventListener('click', (event) => {
+    const dot = event.target.closest('.products__dot');
+    if (!dot) return;
+
+    const page = Number(dot.dataset.page);
+    const step = getSliderStep(topSellingList);
+
+    topSellingList.scrollTo({ left: page * step, behavior: 'smooth' });
+  });
 }
 
 export function onProductCardClick(callback) {

@@ -126,13 +126,35 @@
 
       <section class="products container" id="top-selling">
         <h2 class="section-title">Top-Selling Bouquets</h2>
-        <ul class="products__grid" id="top-selling-list"></ul>
-        <div class="products__dots" aria-hidden="true">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-      </section>
+
+          <div class="products__slider">
+    <button
+      class="products__arrow"
+      id="top-selling-prev"
+      type="button"
+      aria-label="Previous top-selling bouquets"
+    >
+      <svg class="icon" width="20" height="20">
+        <use href="images/icons.svg#icon-chevron-left"></use>
+      </svg>
+    </button>
+
+    <ul class="products__grid" id="top-selling-list" aria-live="polite"></ul>
+
+    <button
+      class="products__arrow"
+      id="top-selling-next"
+      type="button"
+      aria-label="Next top-selling bouquets"
+    >
+      <svg class="icon" width="20" height="20">
+        <use href="images/icons.svg#icon-chevron-right"></use>
+      </svg>
+    </button>
+  </div>
+
+  <div class="products__dots" id="top-selling-dots" aria-label="Top-selling pagination"></div>
+</section>
 
       <section class="products products--bouquets container" id="bouquets">
         <h2 class="section-title">Bouquets</h2>

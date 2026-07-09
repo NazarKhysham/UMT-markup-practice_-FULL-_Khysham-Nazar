@@ -19,14 +19,17 @@ function loadAllBouquets() {
 
 export async function fetchTopSelling() {
   const bouquets = await loadAllBouquets();
-  return bouquets.filter((bouquet) => bouquet.favorite);
+  const favorites = bouquets.filter((bouquet) => bouquet.favorite);
+  const rest = bouquets.filter((bouquet) => !bouquet.favorite);
+
+  return [...favorites, ...rest].slice(0, 6);
 }
 
 export async function fetchBouquets({ page, limit, search }) {
   const bouquets = await loadAllBouquets();
   const query = (search || '').toLowerCase();
-  const filtered = bouquets.filter(
-    (bouquet) => !bouquet.favorite && bouquet.title.toLowerCase().includes(query)
+  const filtered = bouquets.filter((bouquet) =>
+    bouquet.title.toLowerCase().includes(query)
   );
 
   const start = (page - 1) * limit;
