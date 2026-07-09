@@ -2,8 +2,7 @@ import axios from './vendor/axios.esm.js';
 
 const isLocalDev = ['localhost', '127.0.0.1'].includes(window.location.hostname);
 
-// TODO: replace with the real deployed backend URL after deploying to Render.
-const DEPLOYED_API_BASE_URL = 'https://flora-backend.onrender.com/api';
+const DEPLOYED_API_BASE_URL = 'https://umt-markup-practice-full-khysham-nazar.onrender.com/api';
 
 const client = axios.create({
   baseURL: isLocalDev ? 'http://localhost:3000/api' : DEPLOYED_API_BASE_URL,
