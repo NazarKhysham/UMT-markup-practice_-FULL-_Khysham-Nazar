@@ -1,41 +1,146 @@
 # Flora — Full-Stack Project
 
-Final combined project for the GOIT "Практикум з сучасних методологій розробки ПЗ" course — covers all three homework stages (static frontend, interactive frontend, backend) in one repository.
+Full-stack проєкт для курсу GOIT **«Практикум з сучасних методологій розробки ПЗ»**.
 
-## Structure
+Проєкт складається з frontend частини сайту Flora та backend API для роботи з букетами і замовленнями.
 
+## Структура
+
+```text
+frontend/   HTML, CSS, JavaScript сайт Flora
+backend/    Express API + PostgreSQL + Sequelize
 ```
-frontend/   Flora website (HTML/CSS/JS, no framework)
-backend/    REST API for the bouquets catalog (Express + PostgreSQL + Sequelize)
-```
 
-Each folder has its own `README.md` with setup instructions.
+## Технології
 
-## Live links
+- HTML5
+- CSS3
+- JavaScript
+- Node.js
+- Express
+- PostgreSQL
+- Sequelize
+- Neon
+- Swagger UI
 
-- Frontend (GitHub Pages): _add after deploying_
-- Backend (Render): _add after deploying_
-- Swagger UI: `<backend URL>/api-docs`
+## Функціонал
 
-## Running everything locally
+- перегляд каталогу букетів;
+- відображення популярних букетів;
+- пошук букетів;
+- кнопка Show More;
+- модальне вікно з деталями букета;
+- форма оформлення замовлення;
+- збереження замовлень через backend API;
+- API-документація через Swagger.
+
+## Локальний запуск
+
+### Backend
 
 ```bash
-# Terminal 1 — backend
 cd backend
 npm install
-cp .env.example .env   # fill in DATABASE_URL
-npm run seed
-npm run dev
-
-# Terminal 2 — frontend
-cd frontend
-npm install
-npx serve .
 ```
 
-Open the printed frontend URL. The frontend automatically points at `http://localhost:3000/api` when served from `localhost`/`127.0.0.1`, and at the deployed backend URL otherwise (see `frontend/js/api.js`).
+Створіть файл `.env` у папці `backend`:
 
-## Deployment notes
+```env
+PORT=3000
+DATABASE_URL=your_neon_database_url
+DB_SSL=true
+BACKEND_URL=http://localhost:3000
+CORS_ORIGIN=http://localhost:4500
+```
 
-- The backend must be deployed over **HTTPS** (e.g. Render) — if the frontend is served over HTTPS (GitHub Pages) and the backend over plain HTTP, browsers block the requests as mixed content.
-- After deploying the backend, update `DEPLOYED_API_BASE_URL` in `frontend/js/api.js` to the real backend URL, then redeploy the frontend.
+Заповнення бази тестовими даними:
+
+```bash
+npm run seed
+```
+
+Запуск backend:
+
+```bash
+npm run dev
+```
+
+Backend буде доступний за адресою:
+
+```text
+http://localhost:3000
+```
+
+Перевірка API:
+
+```text
+http://localhost:3000/api/bouquets
+```
+
+Swagger UI:
+
+```text
+http://localhost:3000/api-docs
+```
+
+### Frontend
+
+Відкрийте другий термінал:
+
+```bash
+cd frontend
+npm install
+npx serve . -l 4500
+```
+
+Frontend буде доступний за адресою:
+
+```text
+http://localhost:4500
+```
+
+## API
+
+```http
+GET /api/bouquets
+```
+
+Отримати список букетів.
+
+```http
+GET /api/bouquets/:id
+```
+
+Отримати один букет за `id`.
+
+```http
+POST /api/orders
+```
+
+Створити нове замовлення.
+
+## Деплой
+
+Frontend розгортається через **GitHub Pages**.
+
+Backend розгортається через **Render**.
+
+Після деплою backend URL потрібно вказати у файлі:
+
+```text
+frontend/js/api.js
+```
+
+у змінній:
+
+```js
+DEPLOYED_API_BASE_URL
+```
+
+## Важливо
+
+Файл `.env` не потрібно додавати в GitHub, тому що він містить приватні дані для підключення до бази даних.
+
+## Автор
+
+Nazar Khysham
