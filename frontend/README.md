@@ -68,3 +68,4 @@ The GitHub Pages link (served over **HTTPS**) is only useful for reviewing the s
 
 - All photos, colors, typography and copy come directly from the Figma file. A handful of purely functional UI glyphs (burger/close icons, form checkmark, phone/pin/social icons) were hand-drawn as simple SVGs since the macet doesn't expose them as separate exportable assets.
 - Images were compressed with `sharp` (lossless PNG re-encoding, ~70% size reduction) as a one-off step; no build step is required to run the site.
+
